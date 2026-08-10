@@ -38,7 +38,13 @@ function App() {
   };
 
   const onLogin = async () => {
-    await signInWithRedirect(auth, provider);
+    console.log('Login button clicked');
+    try {
+      await signInWithRedirect(auth, provider);
+    } catch (err) {
+      console.error('Login error:', err);
+      alert('Login error: ' + err.message);
+    }
   };
 
   const onLogout = async () => {
