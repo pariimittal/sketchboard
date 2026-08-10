@@ -15,10 +15,11 @@ function App() {
   const canvasRef = useRef(null);
 
   useEffect(() => {
-   getRedirectResult(auth)
-  .then((result) => console.log('Redirect result:', result))
-  .catch((err) => console.error('Redirect login error:', err));
+    getRedirectResult(auth)
+      .then((result) => console.log('Redirect result:', result))
+      .catch((err) => console.error('Redirect login error:', err));
     const unsub = onAuthStateChanged(auth, (u) => {
+      console.log('Auth state changed, user is:', u);
       setUser(u);
       refreshBoardNames(u);
     });
