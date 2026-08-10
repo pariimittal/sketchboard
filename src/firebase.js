@@ -3,12 +3,12 @@ import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, sig
 import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD-1pVt5SoA8v0CcOiJhpASac0IAPLmfaE",
-  authDomain: "sketchboard-aae31.firebaseapp.com",
-  projectId: "sketchboard-aae31",
-  storageBucket: "sketchboard-aae31.firebasestorage.app",
-  messagingSenderId: "555858948759",
-  appId: "1:555858948759:web:ceb3a4d0769b851b15efd2"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 const app = initializeApp(firebaseConfig);
