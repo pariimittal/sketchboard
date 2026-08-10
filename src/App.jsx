@@ -1,8 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import Canvas from './components/Canvas';
 import Toolbar from './components/Toolbar';
-import { auth, db, provider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, doc, setDoc, getDoc, collection, getDocs } from './firebase';
-
+import { auth, db, provider, signInWithPopup, signOut, onAuthStateChanged, doc, setDoc, getDoc, collection, getDocs } from './firebase';
 const STORAGE_PREFIX = 'sketchboard_';
 
 function App() {
@@ -15,9 +14,6 @@ function App() {
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    getRedirectResult(auth)
-      .then((result) => console.log('Redirect result:', result))
-      .catch((err) => console.error('Redirect login error:', err));
     const unsub = onAuthStateChanged(auth, (u) => {
       console.log('Auth state changed, user is:', u);
       setUser(u);
@@ -39,9 +35,8 @@ function App() {
   };
 
   const onLogin = async () => {
-    console.log('Login button clicked');
     try {
-      await signInWithRedirect(auth, provider);
+      await signInWithPopup(auth, provider);
     } catch (err) {
       console.error('Login error:', err);
       alert('Login error: ' + err.message);
