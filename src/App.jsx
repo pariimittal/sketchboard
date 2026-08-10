@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import Canvas from './components/Canvas';
 import Toolbar from './components/Toolbar';
-import { auth, db, provider, signInWithPopup, signOut, onAuthStateChanged, doc, setDoc, getDoc, collection, getDocs } from './firebase';
+
 const STORAGE_PREFIX = 'sketchboard_';
 
 function App() {
@@ -10,64 +10,30 @@ function App() {
   const [size, setSize] = useState(4);
   const [dark, setDark] = useState(false);
   const [boardNames, setBoardNames] = useState([]);
-  const [user, setUser] = useState(null);
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => {
-      console.log('Auth state changed, user is:', u);
-      setUser(u);
-      refreshBoardNames(u);
-    });
-    return unsub;
+    refreshBoardNames();
   }, []);
 
-  const refreshBoardNames = async (u) => {
-    if (u) {
-      const snap = await getDocs(collection(db, 'users', u.uid, 'boards'));
-      setBoardNames(snap.docs.map((d) => d.id));
-    } else {
-      const names = Object.keys(localStorage)
-        .filter((k) => k.startsWith(STORAGE_PREFIX))
-        .map((k) => k.replace(STORAGE_PREFIX, ''));
-      setBoardNames(names);
-    }
+  const refreshBoardNames = () => {
+    const names = Object.keys(localStorage)
+      .filter((k) => k.startsWith(STORAGE_PREFIX))
+      .map((k) => k.replace(STORAGE_PREFIX, ''));
+    setBoardNames(names);
   };
 
-  const onLogin = async () => {
-    try {
-      await signInWithPopup(auth, provider);
-    } catch (err) {
-      console.error('Login error:', err);
-      alert('Login error: ' + err.message);
-    }
-  };
-
-  const onLogout = async () => {
-    await signOut(auth);
-  };
-
-  const saveBoard = async () => {
+  const saveBoard = () => {
     const name = window.prompt('Name this board:');
     if (!name) return;
     const strokes = canvasRef.current.getStrokes();
-    if (user) {
-      await setDoc(doc(db, 'users', user.uid, 'boards', name), { strokes: JSON.stringify(strokes) });
-    } else {
-      localStorage.setItem(STORAGE_PREFIX + name, JSON.stringify(strokes));
-    }
-    refreshBoardNames(user);
-    alert(`Saved as "${name}"${user ? ' to your account' : ' (guest, this browser only)'}`);
+    localStorage.setItem(STORAGE_PREFIX + name, JSON.stringify(strokes));
+    refreshBoardNames();
+    alert(`Saved as "${name}"`);
   };
 
-  const loadBoard = async (name) => {
-    let data;
-    if (user) {
-      const snap = await getDoc(doc(db, 'users', user.uid, 'boards', name));
-      data = snap.exists() ? snap.data().strokes : null;
-    } else {
-      data = localStorage.getItem(STORAGE_PREFIX + name);
-    }
+  const loadBoard = (name) => {
+    const data = localStorage.getItem(STORAGE_PREFIX + name);
     if (!data) return;
     canvasRef.current.loadStrokes(JSON.parse(data));
   };
@@ -83,9 +49,6 @@ function App() {
         size={size} setSize={setSize}
         dark={dark} setDark={setDark}
         boardNames={boardNames}
-        user={user}
-        onLogin={onLogin}
-        onLogout={onLogout}
         actions={{
           undo: () => canvasRef.current.undo(),
           redo: () => canvasRef.current.redo(),

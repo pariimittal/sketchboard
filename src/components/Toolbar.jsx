@@ -1,6 +1,6 @@
 const COLORS = ['#000000', '#ef4444', '#3b82f6', '#22c55e', '#eab308', '#a855f7', '#ffffff'];
 
-export default function Toolbar({ tool, setTool, color, setColor, size, setSize, dark, setDark, actions, boardNames, user, onLogin, onLogout }) {
+export default function Toolbar({ tool, setTool, color, setColor, size, setSize, dark, setDark, actions, boardNames }) {
   const wrap = dark ? 'bg-gray-800/90 border-gray-700 text-gray-100' : 'bg-white/90 border-gray-200 text-gray-800';
   const btn = (active) =>
     `px-3 py-1.5 rounded-lg text-sm font-medium transition whitespace-nowrap ${
@@ -10,7 +10,6 @@ export default function Toolbar({ tool, setTool, color, setColor, size, setSize,
 
   return (
     <div className={`backdrop-blur-md shadow-lg rounded-2xl px-4 py-3 border ${wrap} space-y-3`}>
-      {/* Row 1: drawing tools + color + size */}
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-xs font-semibold uppercase opacity-50 mr-1">Tools</span>
         <button onClick={() => setTool('pen')} className={btn(tool === 'pen')}>✏️ Pen</button>
@@ -39,7 +38,6 @@ export default function Toolbar({ tool, setTool, color, setColor, size, setSize,
         <input type="range" min="2" max="30" value={size} onChange={(e) => setSize(Number(e.target.value))} className="w-24" />
       </div>
 
-      {/* Row 2: history + files + account */}
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-xs font-semibold uppercase opacity-50 mr-1">Edit</span>
         <button onClick={actions.undo} className={btn(false)}>↶ Undo</button>
@@ -65,19 +63,7 @@ export default function Toolbar({ tool, setTool, color, setColor, size, setSize,
 
         <div className="flex-1" />
 
-        <button onClick={() => setDark(!dark)} className={btn(false)}>{dark ? '☀️' : '🌙'}</button>
-
-        {divider}
-
-        {user ? (
-          <div className="flex items-center gap-2">
-            <img src={user.photoURL} alt="" className="w-7 h-7 rounded-full" />
-            <span className="text-sm hidden sm:inline">{user.displayName?.split(' ')[0]}</span>
-            <button onClick={onLogout} className={btn(false)}>Logout</button>
-          </div>
-        ) : (
-          <button onClick={onLogin} className={btn(false)}>🔑 Sign in with Google</button>
-        )}
+        <button onClick={() => setDark(!dark)} className={btn(false)}>{dark ? '☀️ Light' : '🌙 Dark'}</button>
       </div>
     </div>
   );
